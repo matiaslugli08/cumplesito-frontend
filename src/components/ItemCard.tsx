@@ -244,50 +244,55 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                   ) : (
                     // Item is available
                     <div className="space-y-1.5">
+                      {(showNameInput || !allowAnonymousPurchase) && (
+                        <input
+                          type="text"
+                          placeholder={allowAnonymousPurchase ? `${t.yourNameInput} (opcional)` : t.yourNameInput}
+                          value={buyerName}
+                          onChange={(e) => setBuyerName(e.target.value)}
+                          className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-xs"
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              handleMarkAsPurchased();
+                            }
+                          }}
+                        />
+                      )}
+                      <button
+                        onClick={() => {
+                          if (!showNameInput && !allowAnonymousPurchase) {
+                            setShowNameInput(true);
+                          } else {
+                            handleMarkAsPurchased();
+                          }
+                        }}
+                        className="w-full btn-primary text-xs py-1.5 flex items-center justify-center gap-1"
+                      >
+                        <ShoppingCart className="w-3 h-3" />
+                        {(showNameInput || !allowAnonymousPurchase) ? t.confirmPurchase : t.markAsPurchased}
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!showReserveInput && !allowAnonymousPurchase) {
+                            setShowReserveInput(true);
+                          } else {
+                            handleReserve();
+                          }
+                        }}
+                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white text-xs py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors"
+                      >
+                        <Clock className="w-3 h-3" />
+                        Reservar para después
+                      </button>
                       {(showReserveInput || !allowAnonymousPurchase) && (
                         <input
                           type="text"
-                          placeholder="Tu nombre"
+                          placeholder="Tu nombre para reservar"
                           value={reserverName}
                           onChange={(e) => setReserverName(e.target.value)}
-                          className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-xs"
+                          className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 text-xs"
                         />
                       )}
-                      <div className="flex gap-1.5">
-                        <button
-                          onClick={handleReserve}
-                          className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors"
-                        >
-                          <Clock className="w-3 h-3" />
-                          Reservar
-                        </button>
-                        {(showNameInput || !allowAnonymousPurchase) ? (
-                          <>
-                            <input
-                              type="text"
-                              placeholder={t.yourNameInput}
-                              value={buyerName}
-                              onChange={(e) => setBuyerName(e.target.value)}
-                              className="flex-1 px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-xs"
-                            />
-                            <button
-                              onClick={handleMarkAsPurchased}
-                              className="flex-1 btn-primary text-xs py-1.5 flex items-center justify-center gap-1"
-                            >
-                              <ShoppingCart className="w-3 h-3" />
-                              Comprar
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            onClick={() => setShowNameInput(true)}
-                            className="flex-1 btn-primary text-xs py-1.5 flex items-center justify-center gap-1"
-                          >
-                            <ShoppingCart className="w-3 h-3" />
-                            Comprar
-                          </button>
-                        )}
-                      </div>
                     </div>
                   )
                 ) : (
