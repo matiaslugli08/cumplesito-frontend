@@ -143,12 +143,16 @@ export const registerUser = async (data: RegisterDTO): Promise<User> => {
     await handleApiError(response);
   }
 
-  const userData = await response.json();
+  const authData = await response.json();
+  
+  // Store the JWT token (backend now returns token on registration)
+  localStorage.setItem(TOKEN_KEY, authData.access_token);
+
   return {
-    id: userData.id,
-    name: userData.name,
-    email: userData.email,
-    createdAt: new Date(userData.created_at),
+    id: authData.user.id,
+    name: authData.user.name,
+    email: authData.user.email,
+    createdAt: new Date(authData.user.created_at),
   };
 };
 
