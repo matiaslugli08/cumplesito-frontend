@@ -29,6 +29,14 @@ import {
 } from 'lucide-react';
 
 /**
+ * Format date string to local date display (avoids timezone issues)
+ */
+const formatEventDate = (dateString: string): string => {
+  const [year, month, day] = dateString.split('T')[0].split('-');
+  return new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).toLocaleDateString();
+};
+
+/**
  * Main wishlist page component - displays and manages a wishlist
  */
 export const WishlistPage: React.FC = () => {
@@ -345,13 +353,17 @@ export const WishlistPage: React.FC = () => {
               </h1>
               <div className="flex flex-wrap gap-4 text-gray-600">
                 <div className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  <span>{wishlist.ownerName}</span>
+                  <div className="p-2 bg-gradient-to-br from-pink-400 to-purple-500 rounded-lg">
+                    <User className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="font-medium">{wishlist.ownerName}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  <span>
-                    {new Date(wishlist.eventDate).toLocaleDateString()}
+                  <div className="p-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg">
+                    <Calendar className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="font-medium">
+                    {formatEventDate(wishlist.eventDate)}
                   </span>
                 </div>
               </div>

@@ -18,13 +18,13 @@ export default function BirthdayPersonProfile({ profile, ownerName }: BirthdayPe
     <div className="bg-gradient-to-br from-pink-50 via-purple-50 to-fuchsia-50 rounded-2xl p-6 shadow-lg border-2 border-purple-200 mb-8">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-3 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full">
+        <div className="p-3 bg-gradient-to-br from-pink-500 via-fuchsia-500 to-purple-600 rounded-full shadow-lg">
           <User className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
           <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
             Conoce a {ownerName}
-            <Sparkles className="w-5 h-5 text-purple-600" />
+            <Sparkles className="w-5 h-5 text-yellow-500" />
           </h2>
           <p className="text-sm text-gray-600">Perfil generado con IA</p>
         </div>
@@ -44,10 +44,10 @@ export default function BirthdayPersonProfile({ profile, ownerName }: BirthdayPe
       </div>
 
       {/* Decorative Footer */}
-      <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
-        <Sparkles className="w-3 h-3" />
-        <span>Este perfil ayuda a elegir el regalo perfecto</span>
-        <Sparkles className="w-3 h-3" />
+      <div className="mt-4 flex items-center justify-center gap-2 text-xs text-purple-600">
+        <Sparkles className="w-3 h-3 text-yellow-500" />
+        <span className="font-medium">Este perfil ayuda a elegir el regalo perfecto</span>
+        <Sparkles className="w-3 h-3 text-pink-500" />
       </div>
     </div>
   );
