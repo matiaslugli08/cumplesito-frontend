@@ -1,4 +1,16 @@
 /**
+ * Contribution to a pooled gift
+ */
+export interface Contribution {
+  id: string;
+  itemId: string;
+  contributorName: string;
+  amount: number;
+  message?: string;
+  createdAt: Date;
+}
+
+/**
  * Represents a single gift item in a wishlist
  */
 export interface WishlistItem {
@@ -9,6 +21,11 @@ export interface WishlistItem {
   productUrl?: string; // Optional - users can add items without URL
   isPurchased: boolean;
   purchasedBy?: string;
+  // Pooled gift fields
+  itemType: 'normal' | 'pooled_gift';
+  targetAmount?: number; // For pooled gifts
+  currentAmount?: number; // For pooled gifts
+  contributions?: Contribution[]; // For pooled gifts
   createdAt: Date;
   updatedAt: Date;
 }
@@ -60,6 +77,8 @@ export interface CreateWishlistItemDTO {
   description: string;
   imageUrl?: string; // Optional - will be auto-detected from productUrl
   productUrl?: string; // Optional - users can add items without URL
+  itemType?: 'normal' | 'pooled_gift'; // Type of item
+  targetAmount?: number; // Required if itemType is pooled_gift
 }
 
 /**
@@ -70,6 +89,8 @@ export interface UpdateWishlistItemDTO {
   description?: string;
   imageUrl?: string;
   productUrl?: string;
+  itemType?: 'normal' | 'pooled_gift';
+  targetAmount?: number;
 }
 
 /**
@@ -77,6 +98,15 @@ export interface UpdateWishlistItemDTO {
  */
 export interface MarkAsPurchasedDTO {
   purchasedBy: string;
+}
+
+/**
+ * Data required to contribute to a pooled gift
+ */
+export interface ContributeDTO {
+  contributorName: string;
+  amount: number;
+  message?: string;
 }
 
 /**

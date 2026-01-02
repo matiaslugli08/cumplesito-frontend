@@ -80,6 +80,17 @@ const convertItemFromBackend = (data: any): WishlistItem => {
     productUrl: data.product_url,
     isPurchased: data.is_purchased,
     purchasedBy: data.purchased_by,
+    itemType: data.item_type || 'normal',
+    targetAmount: data.target_amount,
+    currentAmount: data.current_amount || 0,
+    contributions: (data.contributions || []).map((c: any) => ({
+      id: c.id,
+      itemId: c.item_id,
+      contributorName: c.contributor_name,
+      amount: c.amount,
+      message: c.message,
+      createdAt: new Date(c.created_at),
+    })),
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
   };
@@ -107,6 +118,8 @@ const convertItemToBackend = (data: CreateWishlistItemDTO | UpdateWishlistItemDT
   if ('description' in data && data.description !== undefined) result.description = data.description;
   if ('imageUrl' in data && data.imageUrl !== undefined) result.image_url = data.imageUrl;
   if ('productUrl' in data && data.productUrl !== undefined) result.product_url = data.productUrl;
+  if ('itemType' in data && data.itemType !== undefined) result.item_type = data.itemType;
+  if ('targetAmount' in data && data.targetAmount !== undefined) result.target_amount = data.targetAmount;
   return result;
 };
 
@@ -366,6 +379,35 @@ export const unmarkItemAsPurchased = async (
     {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
+    }
+  );
+
+  if (!response.ok) {
+    await handleApiError(response);
+  }
+
+  const itemData = await response.json();
+  return convertItemFromBackend(itemData);
+};
+
+/**
+ * Contribute to a pooled gift item (public access)
+ */
+export const contributeToPooledGift = async (
+  wishlistId: string,
+  itemId: string,
+  data: import('@/types').ContributeDTO
+): Promise<WishlistItem> => {
+  const response = await fetch(
+    `${API_BASE_URL}/wishlists/${wishlistId}/items/${itemId}/contribute`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contributor_name: data.contributorName,
+        amount: data.amount,
+        message: data.message,
+      }),
     }
   );
 

@@ -29,6 +29,8 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
     description: '',
     imageUrl: '',
     productUrl: '',
+    itemType: 'normal',
+    targetAmount: undefined,
   });
 
   const [errors, setErrors] = useState<Partial<CreateWishlistItemDTO>>({});
@@ -43,6 +45,8 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
         description: editItem.description,
         imageUrl: editItem.imageUrl,
         productUrl: editItem.productUrl,
+        itemType: editItem.itemType || 'normal',
+        targetAmount: editItem.targetAmount,
       });
     } else {
       setFormData({
@@ -50,6 +54,8 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
         description: '',
         imageUrl: '',
         productUrl: '',
+        itemType: 'normal',
+        targetAmount: undefined,
       });
     }
     setErrors({});
@@ -129,6 +135,13 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
       newErrors.productUrl = t.invalidUrl;
     }
 
+    // Validate pooled gift target amount
+    if (formData.itemType === 'pooled_gift') {
+      if (!formData.targetAmount || formData.targetAmount <= 0) {
+        newErrors.targetAmount = 'El monto objetivo es requerido y debe ser mayor a 0';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -190,6 +203,68 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Item Type */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Tipo de Regalo *
+            </label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="itemType"
+                  value="normal"
+                  checked={formData.itemType === 'normal'}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-primary-600"
+                />
+                <span className="text-sm">🎁 Regalo Normal</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="itemType"
+                  value="pooled_gift"
+                  checked={formData.itemType === 'pooled_gift'}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-primary-600"
+                />
+                <span className="text-sm">💰 Colecta Grupal</span>
+              </label>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              {formData.itemType === 'pooled_gift' 
+                ? '💡 Ideal para regalos caros: varias personas pueden contribuir con dinero'
+                : '💡 Un regalo que una sola persona puede comprar'
+              }
+            </p>
+          </div>
+
+          {/* Target Amount - Only for pooled gifts */}
+          {formData.itemType === 'pooled_gift' && (
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Monto Objetivo ($) *
+              </label>
+              <input
+                type="number"
+                name="targetAmount"
+                value={formData.targetAmount || ''}
+                onChange={handleChange}
+                min="1"
+                step="0.01"
+                className={`input-field ${errors.targetAmount ? 'border-red-500' : ''}`}
+                placeholder="ej: 500"
+              />
+              {errors.targetAmount && (
+                <p className="text-red-500 text-sm mt-1">{errors.targetAmount}</p>
+              )}
+              <p className="text-xs text-gray-500 mt-1">
+                💡 ¿Cuánto necesitas juntar en total?
+              </p>
+            </div>
+          )}
+
           {/* Title */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">

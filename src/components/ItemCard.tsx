@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { WishlistItem } from '@/types';
-import { Pencil, Trash2, ShoppingCart, Undo2, ExternalLink, Gift } from 'lucide-react';
+import { WishlistItem, ContributeDTO } from '@/types';
+import { Pencil, Trash2, ShoppingCart, Undo2, ExternalLink, Gift, DollarSign, Users } from 'lucide-react';
 
 /**
  * Props for the ItemCard component
@@ -13,6 +13,8 @@ interface ItemCardProps {
   onEdit?: (item: WishlistItem) => void;
   onDelete?: (itemId: string) => void;
   onTogglePurchase?: (itemId: string, purchasedBy?: string) => void;
+  onContribute?: (itemId: string, data: ContributeDTO) => void;
+  onViewContributions?: (itemId: string) => void;
 }
 
 /**
@@ -25,10 +27,20 @@ export const ItemCard: React.FC<ItemCardProps> = ({
   onEdit,
   onDelete,
   onTogglePurchase,
+  onContribute,
+  onViewContributions,
 }) => {
   const { t } = useLanguage();
   const [buyerName, setBuyerName] = useState<string>('');
   const [showNameInput, setShowNameInput] = useState<boolean>(false);
+
+  const isPooledGift = item.itemType === 'pooled_gift';
+  const percentComplete = isPooledGift && item.targetAmount
+    ? Math.min((item.currentAmount || 0) / item.targetAmount * 100, 100)
+    : 0;
+  const remainingAmount = isPooledGift && item.targetAmount
+    ? item.targetAmount - (item.currentAmount || 0)
+    : 0;
 
   const handleMarkAsPurchased = () => {
     if (allowAnonymousPurchase) {
@@ -88,11 +100,50 @@ export const ItemCard: React.FC<ItemCardProps> = ({
 
       {/* Item Details */}
       <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">{item.title}</h3>
+        <div className="flex items-start gap-2">
+          <h3 className="flex-1 text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">
+            {item.title}
+          </h3>
+          {isPooledGift && (
+            <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full whitespace-nowrap">
+              💰 Colecta
+            </span>
+          )}
+        </div>
         <p className="text-gray-600 text-xs line-clamp-2">{item.description}</p>
 
+        {/* Pooled Gift Progress */}
+        {isPooledGift && item.targetAmount && (
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-md p-2 space-y-1">
+            <div className="flex justify-between text-xs text-gray-700">
+              <span className="font-semibold">${item.currentAmount?.toFixed(0) || 0}</span>
+              <span className="text-gray-500">de ${item.targetAmount.toFixed(0)}</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-purple-500 to-pink-500 h-full transition-all duration-500"
+                style={{ width: `${percentComplete}%` }}
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-purple-600">
+                {percentComplete.toFixed(0)}%
+              </span>
+              {item.contributions && item.contributions.length > 0 && (
+                <button
+                  onClick={() => onViewContributions?.(item.id)}
+                  className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1"
+                >
+                  <Users className="w-3 h-3" />
+                  {item.contributions.length} {item.contributions.length === 1 ? 'persona' : 'personas'}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Product Link (only if URL is provided) */}
-        {item.productUrl && (
+        {item.productUrl && !isPooledGift && (
           <a
             href={item.productUrl}
             target="_blank"
@@ -124,40 +175,60 @@ export const ItemCard: React.FC<ItemCardProps> = ({
               </button>
             </>
           ) : (
-            // Visitor actions: Mark as Purchased
-              <div className="w-full">
-              {!item.isPurchased ? (
-                <div className="space-y-1.5">
-                  {(showNameInput || !allowAnonymousPurchase) && (
-                    <input
-                      type="text"
-                      placeholder={allowAnonymousPurchase ? `${t.yourNameInput} (${t.cancel.toLowerCase()})` : t.yourNameInput}
-                      value={buyerName}
-                      onChange={(e) => setBuyerName(e.target.value)}
-                      className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-xs"
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          handleMarkAsPurchased();
-                        }
-                      }}
-                    />
-                  )}
+            // Visitor actions
+            <div className="w-full">
+              {isPooledGift ? (
+                // Pooled gift actions: Contribute
+                item.isPurchased ? (
+                  <div className="text-center py-2 bg-green-50 rounded-md">
+                    <p className="text-xs font-semibold text-green-700">
+                      🎉 Meta alcanzada!
+                    </p>
+                  </div>
+                ) : (
                   <button
-                    onClick={handleMarkAsPurchased}
+                    onClick={() => onContribute?.(item.id, { contributorName: '', amount: 0 })}
                     className="w-full btn-primary text-xs py-1.5 flex items-center justify-center gap-1"
                   >
-                    <ShoppingCart className="w-3 h-3" />
-                    {(showNameInput || !allowAnonymousPurchase) ? t.confirmPurchase : t.markAsPurchased}
+                    <DollarSign className="w-3 h-3" />
+                    Contribuir (${remainingAmount.toFixed(0)} restantes)
                   </button>
-                </div>
+                )
               ) : (
-                <button
-                  onClick={handleUnmarkAsPurchased}
-                  className="w-full btn-secondary text-xs py-1.5 flex items-center justify-center gap-1"
-                >
-                  <Undo2 className="w-3 h-3" />
-                  {t.unmarkAsPurchased}
-                </button>
+                // Normal gift actions: Mark as Purchased
+                !item.isPurchased ? (
+                  <div className="space-y-1.5">
+                    {(showNameInput || !allowAnonymousPurchase) && (
+                      <input
+                        type="text"
+                        placeholder={allowAnonymousPurchase ? `${t.yourNameInput} (${t.cancel.toLowerCase()})` : t.yourNameInput}
+                        value={buyerName}
+                        onChange={(e) => setBuyerName(e.target.value)}
+                        className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-xs"
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            handleMarkAsPurchased();
+                          }
+                        }}
+                      />
+                    )}
+                    <button
+                      onClick={handleMarkAsPurchased}
+                      className="w-full btn-primary text-xs py-1.5 flex items-center justify-center gap-1"
+                    >
+                      <ShoppingCart className="w-3 h-3" />
+                      {(showNameInput || !allowAnonymousPurchase) ? t.confirmPurchase : t.markAsPurchased}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleUnmarkAsPurchased}
+                    className="w-full btn-secondary text-xs py-1.5 flex items-center justify-center gap-1"
+                  >
+                    <Undo2 className="w-3 h-3" />
+                    {t.unmarkAsPurchased}
+                  </button>
+                )
               )}
             </div>
           )}

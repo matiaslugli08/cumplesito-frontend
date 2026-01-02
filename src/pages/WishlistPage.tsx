@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { Wishlist, WishlistItem, CreateWishlistItemDTO } from '@/types';
+import { Wishlist, WishlistItem, CreateWishlistItemDTO, ContributeDTO } from '@/types';
 import {
   getWishlist,
   addWishlistItem,
@@ -10,9 +10,11 @@ import {
   deleteWishlistItem,
   markItemAsPurchased,
   unmarkItemAsPurchased,
+  contributeToPooledGift,
 } from '@/services/api';
 import { ItemCard } from '@/components/ItemCard';
 import { ItemFormModal } from '@/components/ItemFormModal';
+import { ContributionModal } from '@/components/ContributionModal';
 import { ResponsiveAdBanner } from '@/components/AdBanner';
 import BirthdayPersonProfile from '@/components/BirthdayPersonProfile';
 import {
@@ -40,6 +42,8 @@ export const WishlistPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<WishlistItem | null>(null);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [contributionModalOpen, setContributionModalOpen] = useState(false);
+  const [contributingToItem, setContributingToItem] = useState<WishlistItem | null>(null);
 
   /**
    * Load wishlist data
@@ -171,6 +175,63 @@ export const WishlistPage: React.FC = () => {
       console.error('Error copying link:', error);
       alert(t.errorUpdatingItem);
     }
+  };
+
+  /**
+   * Handle contribution to pooled gift
+   */
+  const handleContribute = async (itemId: string, _data: ContributeDTO) => {
+    if (!wishlist) return;
+    
+    // Find the item to get its details
+    const item = wishlist.items.find(i => i.id === itemId);
+    if (!item || item.itemType !== 'pooled_gift') return;
+    
+    setContributingToItem(item);
+    setContributionModalOpen(true);
+  };
+
+  /**
+   * Submit contribution
+   */
+  const handleSubmitContribution = async (data: ContributeDTO) => {
+    if (!wishlist || !contributingToItem) return;
+
+    try {
+      const updatedItem = await contributeToPooledGift(
+        wishlist.id,
+        contributingToItem.id,
+        data
+      );
+
+      // Update the wishlist with the updated item
+      setWishlist({
+        ...wishlist,
+        items: wishlist.items.map((item) =>
+          item.id === updatedItem.id ? updatedItem : item
+        ),
+      });
+
+      alert(`¡Gracias ${data.contributorName}! Tu contribución de $${data.amount.toFixed(2)} fue agregada exitosamente.`);
+    } catch (error: any) {
+      console.error('Error contributing:', error);
+      alert(error.message || 'Error al contribuir');
+    }
+  };
+
+  /**
+   * View contributions for an item
+   */
+  const handleViewContributions = (itemId: string) => {
+    if (!wishlist) return;
+    const item = wishlist.items.find(i => i.id === itemId);
+    if (!item) return;
+
+    const contributionsList = item.contributions
+      ?.map(c => `• ${c.contributorName}: $${c.amount.toFixed(2)}${c.message ? ` - "${c.message}"` : ''}`)
+      .join('\n') || 'No hay contribuciones aún';
+
+    alert(`Contribuciones para "${item.title}":\n\n${contributionsList}`);
   };
 
   /**
@@ -312,6 +373,8 @@ export const WishlistPage: React.FC = () => {
                   onEdit={handleOpenEditModal}
                   onDelete={handleDeleteItem}
                   onTogglePurchase={handleTogglePurchase}
+                  onContribute={handleContribute}
+                  onViewContributions={handleViewContributions}
                 />
               ))}
             </div>
@@ -348,6 +411,21 @@ export const WishlistPage: React.FC = () => {
           onSubmit={editingItem ? handleEditItem : handleAddItem}
           editItem={editingItem}
         />
+
+        {/* Contribution Modal */}
+        {contributingToItem && (
+          <ContributionModal
+            isOpen={contributionModalOpen}
+            onClose={() => {
+              setContributionModalOpen(false);
+              setContributingToItem(null);
+            }}
+            onSubmit={handleSubmitContribution}
+            itemTitle={contributingToItem.title}
+            targetAmount={contributingToItem.targetAmount || 0}
+            currentAmount={contributingToItem.currentAmount || 0}
+          />
+        )}
       </div>
     </div>
   );
