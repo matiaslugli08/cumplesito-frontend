@@ -80,6 +80,8 @@ const convertItemFromBackend = (data: any): WishlistItem => {
     productUrl: data.product_url,
     isPurchased: data.is_purchased,
     purchasedBy: data.purchased_by,
+    isReserved: data.is_reserved || false,
+    reservedBy: data.reserved_by,
     itemType: data.item_type || 'normal',
     targetAmount: data.target_amount,
     currentAmount: data.current_amount || 0,
@@ -408,6 +410,56 @@ export const contributeToPooledGift = async (
         amount: data.amount,
         message: data.message,
       }),
+    }
+  );
+
+  if (!response.ok) {
+    await handleApiError(response);
+  }
+
+  const itemData = await response.json();
+  return convertItemFromBackend(itemData);
+};
+
+/**
+ * Reserve an item (public access)
+ */
+export const reserveItem = async (
+  wishlistId: string,
+  itemId: string,
+  data: import('@/types').ReserveItemDTO
+): Promise<WishlistItem> => {
+  const response = await fetch(
+    `${API_BASE_URL}/wishlists/${wishlistId}/items/${itemId}/reserve`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        reserved_by: data.reservedBy,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    await handleApiError(response);
+  }
+
+  const itemData = await response.json();
+  return convertItemFromBackend(itemData);
+};
+
+/**
+ * Unreserve an item (public access)
+ */
+export const unreserveItem = async (
+  wishlistId: string,
+  itemId: string
+): Promise<WishlistItem> => {
+  const response = await fetch(
+    `${API_BASE_URL}/wishlists/${wishlistId}/items/${itemId}/reserve`,
+    {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
     }
   );
 

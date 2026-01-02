@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { Wishlist, WishlistItem, CreateWishlistItemDTO, ContributeDTO } from '@/types';
+import { Wishlist, WishlistItem, CreateWishlistItemDTO, ContributeDTO, ReserveItemDTO } from '@/types';
 import {
   getWishlist,
   addWishlistItem,
@@ -11,6 +11,8 @@ import {
   markItemAsPurchased,
   unmarkItemAsPurchased,
   contributeToPooledGift,
+  reserveItem,
+  unreserveItem,
 } from '@/services/api';
 import { ItemCard } from '@/components/ItemCard';
 import { ItemFormModal } from '@/components/ItemFormModal';
@@ -235,6 +237,54 @@ export const WishlistPage: React.FC = () => {
   };
 
   /**
+   * Reserve an item
+   */
+  const handleReserve = async (itemId: string, data: ReserveItemDTO) => {
+    if (!wishlist) return;
+
+    try {
+      const updatedItem = await reserveItem(wishlist.id, itemId, data);
+
+      // Update the wishlist with the updated item
+      setWishlist({
+        ...wishlist,
+        items: wishlist.items.map((item) =>
+          item.id === updatedItem.id ? updatedItem : item
+        ),
+      });
+
+      alert(`¡Item reservado por ${data.reservedBy}! Otros visitantes verán que está reservado.`);
+    } catch (error: any) {
+      console.error('Error reserving:', error);
+      alert(error.message || 'Error al reservar');
+    }
+  };
+
+  /**
+   * Unreserve an item
+   */
+  const handleUnreserve = async (itemId: string) => {
+    if (!wishlist) return;
+
+    try {
+      const updatedItem = await unreserveItem(wishlist.id, itemId);
+
+      // Update the wishlist with the updated item
+      setWishlist({
+        ...wishlist,
+        items: wishlist.items.map((item) =>
+          item.id === updatedItem.id ? updatedItem : item
+        ),
+      });
+
+      alert('Reserva liberada. El item está disponible nuevamente.');
+    } catch (error: any) {
+      console.error('Error unreserving:', error);
+      alert(error.message || 'Error al liberar reserva');
+    }
+  };
+
+  /**
    * Open modal for editing an item
    */
   const handleOpenEditModal = (item: WishlistItem) => {
@@ -375,6 +425,8 @@ export const WishlistPage: React.FC = () => {
                   onTogglePurchase={handleTogglePurchase}
                   onContribute={handleContribute}
                   onViewContributions={handleViewContributions}
+                  onReserve={handleReserve}
+                  onUnreserve={handleUnreserve}
                 />
               ))}
             </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { WishlistItem, ContributeDTO } from '@/types';
-import { Pencil, Trash2, ShoppingCart, Undo2, ExternalLink, Gift, DollarSign, Users } from 'lucide-react';
+import { WishlistItem, ContributeDTO, ReserveItemDTO } from '@/types';
+import { Pencil, Trash2, ShoppingCart, Undo2, ExternalLink, Gift, DollarSign, Users, Clock } from 'lucide-react';
 
 /**
  * Props for the ItemCard component
@@ -15,6 +15,8 @@ interface ItemCardProps {
   onTogglePurchase?: (itemId: string, purchasedBy?: string) => void;
   onContribute?: (itemId: string, data: ContributeDTO) => void;
   onViewContributions?: (itemId: string) => void;
+  onReserve?: (itemId: string, data: ReserveItemDTO) => void;
+  onUnreserve?: (itemId: string) => void;
 }
 
 /**
@@ -29,10 +31,14 @@ export const ItemCard: React.FC<ItemCardProps> = ({
   onTogglePurchase,
   onContribute,
   onViewContributions,
+  onReserve,
+  onUnreserve,
 }) => {
   const { t } = useLanguage();
   const [buyerName, setBuyerName] = useState<string>('');
   const [showNameInput, setShowNameInput] = useState<boolean>(false);
+  const [showReserveInput, setShowReserveInput] = useState<boolean>(false);
+  const [reserverName, setReserverName] = useState<string>('');
 
   const isPooledGift = item.itemType === 'pooled_gift';
   const percentComplete = isPooledGift && item.targetAmount
@@ -62,6 +68,20 @@ export const ItemCard: React.FC<ItemCardProps> = ({
 
   const handleUnmarkAsPurchased = () => {
     onTogglePurchase?.(item.id);
+  };
+
+  const handleReserve = () => {
+    if (!reserverName.trim() && !allowAnonymousPurchase) {
+      setShowReserveInput(true);
+      return;
+    }
+    onReserve?.(item.id, { reservedBy: reserverName || 'Anónimo' });
+    setReserverName('');
+    setShowReserveInput(false);
+  };
+
+  const handleUnreserve = () => {
+    onUnreserve?.(item.id);
   };
 
   return (
@@ -104,11 +124,19 @@ export const ItemCard: React.FC<ItemCardProps> = ({
           <h3 className="flex-1 text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">
             {item.title}
           </h3>
-          {isPooledGift && (
-            <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full whitespace-nowrap">
-              💰 Colecta
-            </span>
-          )}
+          <div className="flex flex-col gap-1">
+            {isPooledGift && (
+              <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full whitespace-nowrap">
+                💰 Colecta
+              </span>
+            )}
+            {item.isReserved && !item.isPurchased && (
+              <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full whitespace-nowrap flex items-center gap-1">
+                <Clock className="w-2.5 h-2.5" />
+                Reservado
+              </span>
+            )}
+          </div>
         </div>
         <p className="text-gray-600 text-xs line-clamp-2">{item.description}</p>
 
@@ -195,31 +223,73 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                   </button>
                 )
               ) : (
-                // Normal gift actions: Mark as Purchased
+                // Normal gift actions: Reserve/Purchase
                 !item.isPurchased ? (
-                  <div className="space-y-1.5">
-                    {(showNameInput || !allowAnonymousPurchase) && (
-                      <input
-                        type="text"
-                        placeholder={allowAnonymousPurchase ? `${t.yourNameInput} (${t.cancel.toLowerCase()})` : t.yourNameInput}
-                        value={buyerName}
-                        onChange={(e) => setBuyerName(e.target.value)}
-                        className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-xs"
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter') {
-                            handleMarkAsPurchased();
-                          }
-                        }}
-                      />
-                    )}
-                    <button
-                      onClick={handleMarkAsPurchased}
-                      className="w-full btn-primary text-xs py-1.5 flex items-center justify-center gap-1"
-                    >
-                      <ShoppingCart className="w-3 h-3" />
-                      {(showNameInput || !allowAnonymousPurchase) ? t.confirmPurchase : t.markAsPurchased}
-                    </button>
-                  </div>
+                  item.isReserved ? (
+                    // Item is reserved
+                    <div className="space-y-1.5">
+                      <div className="text-center py-2 bg-yellow-50 rounded-md">
+                        <p className="text-xs font-semibold text-yellow-700">
+                          ⏳ Reservado por {item.reservedBy}
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleUnreserve}
+                        className="w-full btn-secondary text-xs py-1.5 flex items-center justify-center gap-1"
+                      >
+                        <Undo2 className="w-3 h-3" />
+                        Liberar Reserva
+                      </button>
+                    </div>
+                  ) : (
+                    // Item is available
+                    <div className="space-y-1.5">
+                      {(showReserveInput || !allowAnonymousPurchase) && (
+                        <input
+                          type="text"
+                          placeholder="Tu nombre"
+                          value={reserverName}
+                          onChange={(e) => setReserverName(e.target.value)}
+                          className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-xs"
+                        />
+                      )}
+                      <div className="flex gap-1.5">
+                        <button
+                          onClick={handleReserve}
+                          className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors"
+                        >
+                          <Clock className="w-3 h-3" />
+                          Reservar
+                        </button>
+                        {(showNameInput || !allowAnonymousPurchase) ? (
+                          <>
+                            <input
+                              type="text"
+                              placeholder={t.yourNameInput}
+                              value={buyerName}
+                              onChange={(e) => setBuyerName(e.target.value)}
+                              className="flex-1 px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-xs"
+                            />
+                            <button
+                              onClick={handleMarkAsPurchased}
+                              className="flex-1 btn-primary text-xs py-1.5 flex items-center justify-center gap-1"
+                            >
+                              <ShoppingCart className="w-3 h-3" />
+                              Comprar
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={() => setShowNameInput(true)}
+                            className="flex-1 btn-primary text-xs py-1.5 flex items-center justify-center gap-1"
+                          >
+                            <ShoppingCart className="w-3 h-3" />
+                            Comprar
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )
                 ) : (
                   <button
                     onClick={handleUnmarkAsPurchased}

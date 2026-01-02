@@ -21,6 +21,9 @@ export interface WishlistItem {
   productUrl?: string; // Optional - users can add items without URL
   isPurchased: boolean;
   purchasedBy?: string;
+  // Reserved state
+  isReserved: boolean;
+  reservedBy?: string;
   // Pooled gift fields
   itemType: 'normal' | 'pooled_gift';
   targetAmount?: number; // For pooled gifts
@@ -107,6 +110,13 @@ export interface ContributeDTO {
   contributorName: string;
   amount: number;
   message?: string;
+}
+
+/**
+ * Data required to reserve an item
+ */
+export interface ReserveItemDTO {
+  reservedBy: string;
 }
 
 /**
