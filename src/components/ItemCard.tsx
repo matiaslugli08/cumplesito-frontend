@@ -86,12 +86,12 @@ export const ItemCard: React.FC<ItemCardProps> = ({
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-3 ${
+      className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 sm:p-3 ${
         item.isPurchased ? 'opacity-75 border-2 border-green-400' : 'border border-gray-200'
       }`}
     >
       {/* Item Image */}
-      <div className="relative mb-3 rounded-md overflow-hidden bg-gray-100 h-40">
+      <div className="relative mb-3 rounded-md overflow-hidden bg-gray-100 h-48 sm:h-40">
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
@@ -121,7 +121,7 @@ export const ItemCard: React.FC<ItemCardProps> = ({
       {/* Item Details */}
       <div className="space-y-2">
         <div className="flex items-start gap-2">
-          <h3 className="flex-1 text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">
+          <h3 className="flex-1 text-base sm:text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">
             {item.title}
           </h3>
           <div className="flex flex-col gap-1">
@@ -138,7 +138,7 @@ export const ItemCard: React.FC<ItemCardProps> = ({
             )}
           </div>
         </div>
-        <p className="text-gray-600 text-xs line-clamp-2">{item.description}</p>
+        <p className="text-gray-600 text-sm sm:text-xs line-clamp-2">{item.description}</p>
 
         {/* Pooled Gift Progress */}
         {isPooledGift && item.targetAmount && (
@@ -189,16 +189,16 @@ export const ItemCard: React.FC<ItemCardProps> = ({
             <>
               <button
                 onClick={() => onEdit?.(item)}
-                className="flex-1 btn-secondary text-xs py-1.5 flex items-center justify-center gap-1"
+                className="flex-1 btn-secondary text-sm sm:text-xs py-2 sm:py-1.5 flex items-center justify-center gap-1"
               >
-                <Pencil className="w-3 h-3" />
+                <Pencil className="w-4 h-4 sm:w-3 sm:h-3" />
                 {t.edit}
               </button>
               <button
                 onClick={() => onDelete?.(item.id)}
-                className="flex-1 btn-danger text-xs py-1.5 flex items-center justify-center gap-1"
+                className="flex-1 btn-danger text-sm sm:text-xs py-2 sm:py-1.5 flex items-center justify-center gap-1"
               >
-                <Trash2 className="w-3 h-3" />
+                <Trash2 className="w-4 h-4 sm:w-3 sm:h-3" />
                 {t.delete}
               </button>
             </>
@@ -216,9 +216,9 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                 ) : (
                   <button
                     onClick={() => onContribute?.(item.id, { contributorName: '', amount: 0 })}
-                    className="w-full btn-primary text-xs py-1.5 flex items-center justify-center gap-1"
+                    className="w-full btn-primary text-sm sm:text-xs py-2 sm:py-1.5 flex items-center justify-center gap-1"
                   >
-                    <DollarSign className="w-3 h-3" />
+                    <DollarSign className="w-4 h-4 sm:w-3 sm:h-3" />
                     Contribuir (${remainingAmount.toFixed(0)} restantes)
                   </button>
                 )
@@ -235,9 +235,9 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                       </div>
                       <button
                         onClick={handleUnreserve}
-                        className="w-full btn-secondary text-xs py-1.5 flex items-center justify-center gap-1"
+                        className="w-full btn-secondary text-sm sm:text-xs py-2 sm:py-1.5 flex items-center justify-center gap-1"
                       >
-                        <Undo2 className="w-3 h-3" />
+                        <Undo2 className="w-4 h-4 sm:w-3 sm:h-3" />
                         Liberar Reserva
                       </button>
                     </div>
@@ -250,7 +250,7 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                           placeholder={allowAnonymousPurchase ? `${t.yourNameInput} (opcional)` : t.yourNameInput}
                           value={buyerName}
                           onChange={(e) => setBuyerName(e.target.value)}
-                          className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-xs"
+                          className="w-full px-3 py-2 sm:px-2 sm:py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-sm sm:text-xs"
                           onKeyPress={(e) => {
                             if (e.key === 'Enter') {
                               handleMarkAsPurchased();
@@ -266,9 +266,9 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                             handleMarkAsPurchased();
                           }
                         }}
-                        className="w-full btn-primary text-xs py-1.5 flex items-center justify-center gap-1"
+                        className="w-full btn-primary text-sm sm:text-xs py-2 sm:py-1.5 flex items-center justify-center gap-1"
                       >
-                        <ShoppingCart className="w-3 h-3" />
+                        <ShoppingCart className="w-4 h-4 sm:w-3 sm:h-3" />
                         {(showNameInput || !allowAnonymousPurchase) ? t.confirmPurchase : t.markAsPurchased}
                       </button>
                       <button
@@ -279,9 +279,9 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                             handleReserve();
                           }
                         }}
-                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white text-xs py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors"
+                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white text-sm sm:text-xs py-2 sm:py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors"
                       >
-                        <Clock className="w-3 h-3" />
+                        <Clock className="w-4 h-4 sm:w-3 sm:h-3" />
                         Reservar para después
                       </button>
                       {(showReserveInput || !allowAnonymousPurchase) && (
@@ -290,7 +290,7 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                           placeholder="Tu nombre para reservar"
                           value={reserverName}
                           onChange={(e) => setReserverName(e.target.value)}
-                          className="w-full px-2 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 text-xs"
+                          className="w-full px-3 py-2 sm:px-2 sm:py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 text-sm sm:text-xs"
                         />
                       )}
                     </div>
@@ -298,9 +298,9 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                 ) : (
                   <button
                     onClick={handleUnmarkAsPurchased}
-                    className="w-full btn-secondary text-xs py-1.5 flex items-center justify-center gap-1"
+                    className="w-full btn-secondary text-sm sm:text-xs py-2 sm:py-1.5 flex items-center justify-center gap-1"
                   >
-                    <Undo2 className="w-3 h-3" />
+                    <Undo2 className="w-4 h-4 sm:w-3 sm:h-3" />
                     {t.unmarkAsPurchased}
                   </button>
                 )
