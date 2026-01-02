@@ -16,7 +16,7 @@ import {
  */
 
 // API Configuration
-const API_BASE_URL = 'http://localhost:8001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001/api';
 
 // Token storage key
 const TOKEN_KEY = 'auth_token';
