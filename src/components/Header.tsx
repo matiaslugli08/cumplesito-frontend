@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { LanguageSelector } from './LanguageSelector';
-import { Gift, LogOut, User } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 
 /**
  * Header component with navigation and language selector

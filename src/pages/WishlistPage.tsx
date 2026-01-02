@@ -21,7 +21,6 @@ import {
   Calendar,
   User,
   ArrowLeft,
-  Copy,
   Check,
 } from 'lucide-react';
 
@@ -64,7 +63,7 @@ export const WishlistPage: React.FC = () => {
         // Check if user is owner
         const ownerParam = searchParams.get('owner');
         const isUserOwner = user && data.ownerId === user.id;
-        setIsOwner(ownerParam === 'true' || isUserOwner);
+        setIsOwner(ownerParam === 'true' || Boolean(isUserOwner));
       } catch (error) {
         console.error('Error loading wishlist:', error);
         alert(t.errorLoadingWishlist);

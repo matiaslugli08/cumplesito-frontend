@@ -17,7 +17,6 @@ import {
 
 // API Configuration
 const API_BASE_URL = 'http://localhost:8001/api';
-const FRONTEND_BASE_URL = 'http://localhost:5173';
 
 // Token storage key
 const TOKEN_KEY = 'auth_token';
@@ -200,7 +199,7 @@ export const isAuthenticated = (): boolean => {
  */
 export const createWishlist = async (
   data: CreateWishlistDTO,
-  ownerId: string // Not used, backend gets from JWT
+  _ownerId: string // Not used, backend gets from JWT
 ): Promise<Wishlist> => {
   const response = await fetch(`${API_BASE_URL}/wishlists`, {
     method: 'POST',
@@ -239,7 +238,7 @@ export const getWishlist = async (id: string): Promise<Wishlist | null> => {
 /**
  * Get all wishlists for the authenticated user
  */
-export const getUserWishlistsFull = async (userId: string): Promise<Wishlist[]> => {
+export const getUserWishlistsFull = async (_userId: string): Promise<Wishlist[]> => {
   const response = await fetch(`${API_BASE_URL}/wishlists`, {
     headers: getAuthHeaders(),
   });
@@ -255,7 +254,7 @@ export const getUserWishlistsFull = async (userId: string): Promise<Wishlist[]> 
 /**
  * Delete a wishlist
  */
-export const deleteWishlist = async (wishlistId: string, userId: string): Promise<void> => {
+export const deleteWishlist = async (wishlistId: string, _userId: string): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/wishlists/${wishlistId}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
