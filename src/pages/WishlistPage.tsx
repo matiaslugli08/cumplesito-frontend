@@ -14,6 +14,7 @@ import {
 import { ItemCard } from '@/components/ItemCard';
 import { ItemFormModal } from '@/components/ItemFormModal';
 import { ResponsiveAdBanner } from '@/components/AdBanner';
+import BirthdayPersonProfile from '@/components/BirthdayPersonProfile';
 import {
   Plus,
   Share2,
@@ -248,9 +249,20 @@ export const WishlistPage: React.FC = () => {
 
             {/* Description */}
             <p className="text-gray-700">{wishlist.description}</p>
+          </div>
+        </div>
 
-            {/* Actions */}
-            <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+        {/* AI-Generated Profile */}
+        {wishlist.birthdayPersonProfile && (
+          <BirthdayPersonProfile
+            profile={wishlist.birthdayPersonProfile}
+            ownerName={wishlist.ownerName}
+          />
+        )}
+
+        {/* Actions Card */}
+        <div className="card mb-8">
+          <div className="flex flex-wrap gap-3">
               {isOwner && (
                 <button
                   onClick={handleOpenAddModal}
@@ -276,17 +288,16 @@ export const WishlistPage: React.FC = () => {
                   </>
                 )}
               </button>
-            </div>
-
-            {/* Owner Notice */}
-            {isOwner && (
-              <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-                <p className="text-sm text-primary-800">
-                  <strong>{t.ownerNotice}</strong>
-                </p>
-              </div>
-            )}
           </div>
+
+          {/* Owner Notice */}
+          {isOwner && (
+            <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 mt-4">
+              <p className="text-sm text-primary-800">
+                <strong>{t.ownerNotice}</strong>
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Items Grid */}

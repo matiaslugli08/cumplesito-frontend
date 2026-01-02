@@ -16,8 +16,8 @@ import {
  */
 
 // API Configuration
-const API_BASE_URL = 'http://localhost:8000/api';
-const FRONTEND_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://localhost:8001/api';
+const FRONTEND_BASE_URL = 'http://localhost:5173';
 
 // Token storage key
 const TOKEN_KEY = 'auth_token';
@@ -60,6 +60,7 @@ const convertWishlistFromBackend = (data: any): Wishlist => {
     ownerId: data.owner_id,
     eventDate: data.event_date,
     description: data.description,
+    birthdayPersonProfile: data.birthday_person_profile,
     allowAnonymousPurchase: data.allow_anonymous_purchase,
     items: (data.items || []).map(convertItemFromBackend),
     createdAt: new Date(data.created_at),

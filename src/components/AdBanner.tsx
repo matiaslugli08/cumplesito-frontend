@@ -1,18 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { AdsConfig, areAdsEnabled } from '@/config/ads';
 
 /**
  * Ad Banner Component
- * Displays advertisements in a subtle, non-intrusive way
+ * Displays Google AdSense advertisements or placeholder in demo mode
  */
 
 interface AdBannerProps {
   /**
    * Size of the ad banner
-   * - 'small': 320x100 (mobile-friendly)
-   * - 'medium': 728x90 (leaderboard)
-   * - 'large': 970x90 (super leaderboard)
    */
-  size?: 'small' | 'medium' | 'large';
+  size?: 'small' | 'medium' | 'large' | 'square' | 'sidebar';
 
   /**
    * Optional custom class for styling
@@ -20,67 +18,88 @@ interface AdBannerProps {
   className?: string;
 
   /**
-   * Slot ID for Google AdSense (example)
-   * Replace with your actual ad network slot ID
+   * Slot ID for Google AdSense
+   * Use one of the predefined slots from AdsConfig.AD_SLOTS
    */
-  slotId?: string;
+  slotId: string;
+}
+
+// Declaración global para TypeScript
+declare global {
+  interface Window {
+    adsbygoogle: any[];
+  }
 }
 
 export const AdBanner: React.FC<AdBannerProps> = ({
   size = 'small',
   className = '',
-  slotId = 'demo-slot'
+  slotId
 }) => {
-  // Size configurations
-  const sizeConfig = {
-    small: { width: 320, height: 100 },
-    medium: { width: 728, height: 90 },
-    large: { width: 970, height: 90 },
-  };
-
-  const { width, height } = sizeConfig[size];
+  const adRef = useRef<HTMLModElement>(null);
+  const isAdsEnabled = areAdsEnabled();
+  const { width, height } = AdsConfig.SIZES[size];
 
   useEffect(() => {
-    // Here you would initialize your ad network (e.g., Google AdSense)
-    // Example for Google AdSense:
-    // (window.adsbygoogle = window.adsbygoogle || []).push({});
+    // Solo cargar ads si están habilitados
+    if (isAdsEnabled && adRef.current) {
+      try {
+        // Inicializar Google AdSense
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (error) {
+        console.error('Error loading AdSense:', error);
+      }
+    }
+  }, [slotId, isAdsEnabled]);
 
-    // For now, this is a placeholder that shows where ads will appear
-  }, [slotId]);
-
-  // Demo/placeholder ad - replace with actual ad network code
   return (
     <div className={`ad-banner-container ${className}`}>
       <div className="flex flex-col items-center justify-center my-4">
-        {/* Label to indicate it's an ad */}
-        <div className="text-xs text-gray-400 mb-1">Advertisement</div>
+        {/* Label de Advertisement */}
+        {AdsConfig.STYLES.showLabel && (
+          <div className="text-xs text-gray-400 mb-1">
+            {AdsConfig.STYLES.labelText}
+          </div>
+        )}
 
-        {/* Ad placeholder - Replace this with your actual ad code */}
+        {/* Ad Container */}
         <div
-          className="border border-gray-200 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden shadow-sm"
+          className={`${
+            isAdsEnabled ? '' : 'border rounded-lg shadow-sm'
+          } flex items-center justify-center overflow-hidden`}
           style={{
             width: `min(${width}px, 100%)`,
             height: `${height}px`,
-            maxWidth: '100%'
+            maxWidth: '100%',
+            ...(isAdsEnabled ? {} : {
+              borderColor: AdsConfig.STYLES.borderColor,
+              backgroundColor: AdsConfig.STYLES.backgroundColor,
+            })
           }}
         >
-          {/*
-            REPLACE THIS SECTION WITH YOUR AD NETWORK CODE
-
-            For Google AdSense:
-            <ins className="adsbygoogle"
-                 style={{ display: 'inline-block', width: `${width}px`, height: `${height}px` }}
-                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                 data-ad-slot={slotId}></ins>
-
-            For other networks, follow their integration guidelines
-          */}
-
-          {/* Placeholder content - remove when adding real ads */}
-          <div className="text-center p-4">
-            <p className="text-sm text-gray-500 font-medium">Ad Space</p>
-            <p className="text-xs text-gray-400 mt-1">{width}x{height}</p>
-          </div>
+          {isAdsEnabled ? (
+            // 🎯 GOOGLE ADSENSE AD (cuando está habilitado)
+            <ins
+              ref={adRef}
+              className="adsbygoogle"
+              style={{
+                display: 'inline-block',
+                width: `${width}px`,
+                height: `${height}px`,
+              }}
+              data-ad-client={AdsConfig.ADSENSE_PUBLISHER_ID}
+              data-ad-slot={slotId}
+            />
+          ) : (
+            // 📦 PLACEHOLDER (modo demo)
+            <div className="text-center p-4">
+              <p className="text-sm text-gray-500 font-medium">💰 Ad Space</p>
+              <p className="text-xs text-gray-400 mt-1">{width}x{height}</p>
+              <p className="text-xs text-gray-300 mt-2">
+                (Configura AdSense en src/config/ads.ts)
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -91,10 +110,10 @@ export const AdBanner: React.FC<AdBannerProps> = ({
  * Responsive Ad Banner
  * Automatically adjusts size based on screen width
  */
-export const ResponsiveAdBanner: React.FC<{ className?: string; slotId?: string }> = ({
-  className = '',
-  slotId
-}) => {
+export const ResponsiveAdBanner: React.FC<{
+  className?: string;
+  slotId: string;
+}> = ({ className = '', slotId }) => {
   return (
     <div className={`responsive-ad-banner ${className}`}>
       {/* Show small on mobile */}
@@ -107,7 +126,7 @@ export const ResponsiveAdBanner: React.FC<{ className?: string; slotId?: string 
         <AdBanner size="medium" slotId={slotId} />
       </div>
 
-      {/* Show large on desktop */}
+      {/* Show medium on desktop */}
       <div className="hidden lg:block">
         <AdBanner size="medium" slotId={slotId} />
       </div>
@@ -116,13 +135,31 @@ export const ResponsiveAdBanner: React.FC<{ className?: string; slotId?: string 
 };
 
 /**
- * Inline Ad Banner
- * Small banner that fits inline with content
+ * Sidebar Ad Banner
+ * Vertical banner for sidebars
  */
-export const InlineAdBanner: React.FC<{ className?: string }> = ({ className = '' }) => {
+export const SidebarAdBanner: React.FC<{
+  className?: string;
+  slotId: string;
+}> = ({ className = '', slotId }) => {
   return (
-    <div className={`inline-ad-banner ${className}`}>
-      <AdBanner size="small" />
+    <div className={`sidebar-ad-banner ${className}`}>
+      <AdBanner size="sidebar" slotId={slotId} />
+    </div>
+  );
+};
+
+/**
+ * Square Ad Banner
+ * Medium rectangle ad (300x250)
+ */
+export const SquareAdBanner: React.FC<{
+  className?: string;
+  slotId: string;
+}> = ({ className = '', slotId }) => {
+  return (
+    <div className={`square-ad-banner ${className}`}>
+      <AdBanner size="square" slotId={slotId} />
     </div>
   );
 };

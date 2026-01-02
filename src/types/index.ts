@@ -23,6 +23,7 @@ export interface Wishlist {
   ownerId: string;
   eventDate: string;
   description: string;
+  birthdayPersonProfile?: string; // AI-generated profile
   items: WishlistItem[];
   allowAnonymousPurchase: boolean;
   createdAt: Date;
