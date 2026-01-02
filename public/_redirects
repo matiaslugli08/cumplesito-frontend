@@ -1,0 +1,10 @@
+# Netlify redirects for SPA routing
+# This ensures all routes work properly in production
+
+/*    /index.html   200
+
+# Optional: Redirect www to non-www
+# https://www.cumplesito.com/*  https://cumplesito.com/:splat  301!
+
+# Optional: Force HTTPS
+# http://cumplesito.com/*  https://cumplesito.com/:splat  301!

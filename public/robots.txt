@@ -1,0 +1,35 @@
+# Cumplesito - Robots.txt
+# Permite que todos los motores de búsqueda indexen el sitio
+
+User-agent: *
+Allow: /
+
+# Páginas específicas
+Allow: /login
+Allow: /register
+Allow: /create
+Allow: /wishlist/
+Allow: /my-wishlists
+
+# Archivos importantes para SEO
+Sitemap: https://cumplesito.com/sitemap.xml
+
+# Crawl delay (opcional, para no sobrecargar el servidor)
+Crawl-delay: 1
+
+# Configuración específica para Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Configuración específica para Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+# Bloquear malos bots (opcional)
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /

@@ -1,0 +1,102 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gift box base -->
+  <g filter="url(#shadow)">
+    <!-- Bottom part of gift - Degradado rosa a morado -->
+    <rect x="40" y="100" width="120" height="80" rx="8" fill="url(#gradient1)"/>
+
+    <!-- Top part of gift - Rosa brillante -->
+    <rect x="40" y="70" width="120" height="30" rx="6" fill="url(#gradient2)"/>
+
+    <!-- Ribbon vertical - Amarillo brillante -->
+    <rect x="92" y="70" width="16" height="110" fill="#FFD60A"/>
+    <rect x="92" y="70" width="16" height="110" fill="url(#ribbonShine)" opacity="0.4"/>
+
+    <!-- Ribbon horizontal - Amarillo brillante -->
+    <rect x="40" y="92" width="120" height="16" fill="#FFD60A"/>
+    <rect x="40" y="92" width="120" height="16" fill="url(#ribbonShine)" opacity="0.4"/>
+
+    <!-- Bow on top - Rosa chicle y naranja -->
+    <ellipse cx="75" cy="65" rx="20" ry="15" fill="#FF006E"/>
+    <ellipse cx="125" cy="65" rx="20" ry="15" fill="#FF006E"/>
+    <circle cx="100" cy="65" r="12" fill="#FF6B35"/>
+    <ellipse cx="75" cy="65" rx="20" ry="15" fill="url(#bowShine)" opacity="0.3"/>
+    <ellipse cx="125" cy="65" rx="20" ry="15" fill="url(#bowShine)" opacity="0.3"/>
+
+    <!-- Birthday candle - Degradado rosa -->
+    <rect x="96" y="35" width="8" height="25" rx="2" fill="url(#candleGradient)"/>
+    <ellipse cx="100" cy="32" rx="5" ry="8" fill="#d946ef"/>
+
+    <!-- Flame - Amarillo y naranja -->
+    <ellipse cx="100" cy="27" rx="4" ry="7" fill="#FFD60A"/>
+    <ellipse cx="100" cy="26" rx="2.5" ry="4" fill="#FFF"/>
+    <circle cx="100" cy="27" r="1.5" fill="#FF6B35"/>
+
+    <!-- Sparkles - Multicolor fiesta -->
+    <g opacity="0.9">
+      <path d="M30 60 L33 63 L30 66 L27 63 Z" fill="#FFD60A"/>
+      <path d="M170 80 L173 83 L170 86 L167 83 Z" fill="#FF006E"/>
+      <path d="M25 120 L28 123 L25 126 L22 123 Z" fill="#9D4EDD"/>
+      <path d="M175 110 L178 113 L175 116 L172 113 Z" fill="#4CC9F0"/>
+      <circle cx="35" cy="90" r="3" fill="#FF6B35"/>
+      <circle cx="165" cy="140" r="3" fill="#06FFA5"/>
+
+      <!-- Estrellas adicionales -->
+      <path d="M50 45 L52 47 L50 49 L48 47 Z" fill="#d946ef"/>
+      <path d="M150 50 L152 52 L150 54 L148 52 Z" fill="#FFD60A"/>
+      <circle cx="45" cy="160" r="2" fill="#FF006E"/>
+      <circle cx="155" cy="155" r="2" fill="#4CC9F0"/>
+    </g>
+
+    <!-- Confetti dots - Más colorido -->
+    <circle cx="50" cy="50" r="3" fill="#d946ef"/>
+    <circle cx="150" cy="55" r="3" fill="#FF006E"/>
+    <circle cx="45" cy="150" r="3" fill="#FFD60A"/>
+    <circle cx="155" cy="145" r="3" fill="#9D4EDD"/>
+    <circle cx="60" cy="130" r="2" fill="#4CC9F0"/>
+    <circle cx="140" cy="135" r="2" fill="#FF6B35"/>
+
+    <!-- Corazones pequeños -->
+    <path d="M55 75 Q55 72 57 72 Q59 72 59 75 Q59 77 57 79 Q55 77 55 75" fill="#FF006E" opacity="0.8"/>
+    <path d="M145 125 Q145 122 147 122 Q149 122 149 125 Q149 127 147 129 Q145 127 145 125" fill="#d946ef" opacity="0.8"/>
+  </g>
+
+  <!-- Gradients and filters -->
+  <defs>
+    <!-- Caja: Rosa a Morado -->
+    <linearGradient id="gradient1" x1="40" y1="100" x2="160" y2="180">
+      <stop offset="0%" stop-color="#f0abfc"/>
+      <stop offset="50%" stop-color="#e879f9"/>
+      <stop offset="100%" stop-color="#9D4EDD"/>
+    </linearGradient>
+
+    <!-- Tapa: Rosa brillante -->
+    <linearGradient id="gradient2" x1="40" y1="70" x2="160" y2="100">
+      <stop offset="0%" stop-color="#fae8ff"/>
+      <stop offset="100%" stop-color="#f0abfc"/>
+    </linearGradient>
+
+    <!-- Vela: Rosa degradado -->
+    <linearGradient id="candleGradient" x1="96" y1="35" x2="104" y2="60">
+      <stop offset="0%" stop-color="#d946ef"/>
+      <stop offset="100%" stop-color="#FF006E"/>
+    </linearGradient>
+
+    <!-- Brillo del moño -->
+    <linearGradient id="ribbonShine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="white" stop-opacity="0"/>
+      <stop offset="50%" stop-color="white" stop-opacity="1"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Brillo del moño -->
+    <linearGradient id="bowShine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="white" stop-opacity="1"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Sombra -->
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+</svg>
