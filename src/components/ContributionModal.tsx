@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useLanguage } from '@/context/LanguageContext';
 import { ContributeDTO } from '@/types';
 import { X, DollarSign } from 'lucide-react';
 
