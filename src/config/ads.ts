@@ -10,13 +10,13 @@
  */
 
 export const AdsConfig = {
-  // ⚠️ CAMBIAR A TRUE CUANDO TENGAS TU CUENTA DE ADSENSE APROBADA
-  ADSENSE_ENABLED: false,
+  // ✅ AdSense habilitado
+  ADSENSE_ENABLED: true,
 
-  // 🔑 TU PUBLISHER ID DE ADSENSE (Reemplazar con el tuyo)
+  // 🔑 TU PUBLISHER ID DE ADSENSE
   // Lo encuentras en: AdSense > Cuenta > Información de la cuenta
   // Formato: ca-pub-1234567890123456
-  ADSENSE_PUBLISHER_ID: 'ca-pub-XXXXXXXXXXXXXXXX', // ⬅️ REEMPLAZAR AQUÍ
+  ADSENSE_PUBLISHER_ID: 'ca-pub-8864261242798498',
 
   // 📊 SLOT IDS DE TUS UNIDADES DE ANUNCIOS
   // Los obtienes al crear unidades de anuncios en AdSense > Anuncios > Por unidad de anuncio
