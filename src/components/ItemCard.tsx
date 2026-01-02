@@ -91,15 +91,17 @@ export const ItemCard: React.FC<ItemCardProps> = ({
         <h3 className="text-xl font-bold text-gray-800">{item.title}</h3>
         <p className="text-gray-600 text-sm line-clamp-3">{item.description}</p>
 
-        {/* Product Link */}
-        <a
-          href={item.productUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium text-sm"
-        >
-          {t.viewProduct} <ExternalLink className="ml-1 w-4 h-4" />
-        </a>
+        {/* Product Link (only if URL is provided) */}
+        {item.productUrl && (
+          <a
+            href={item.productUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium text-sm"
+          >
+            {t.viewProduct} <ExternalLink className="ml-1 w-4 h-4" />
+          </a>
+        )}
 
         {/* Action Buttons */}
         <div className="pt-4 border-t border-gray-200 flex gap-2">

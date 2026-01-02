@@ -6,7 +6,7 @@ export interface WishlistItem {
   title: string;
   description: string;
   imageUrl?: string; // Optional - may be null if not detected
-  productUrl: string;
+  productUrl?: string; // Optional - users can add items without URL
   isPurchased: boolean;
   purchasedBy?: string;
   createdAt: Date;
@@ -59,7 +59,7 @@ export interface CreateWishlistItemDTO {
   title: string;
   description: string;
   imageUrl?: string; // Optional - will be auto-detected from productUrl
-  productUrl: string;
+  productUrl?: string; // Optional - users can add items without URL
 }
 
 /**

@@ -119,14 +119,13 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
       newErrors.description = t.required;
     }
 
-    // Image URL is now optional - will be extracted from product URL if not provided
+    // Image URL is optional
     if (formData.imageUrl && !isValidUrl(formData.imageUrl)) {
       newErrors.imageUrl = t.invalidUrl;
     }
 
-    if (!formData.productUrl.trim()) {
-      newErrors.productUrl = t.required;
-    } else if (!isValidUrl(formData.productUrl)) {
+    // Product URL is now optional - users can add items with just a description
+    if (formData.productUrl && formData.productUrl.trim() && !isValidUrl(formData.productUrl)) {
       newErrors.productUrl = t.invalidUrl;
     }
 
@@ -209,10 +208,10 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
             )}
           </div>
 
-          {/* Product URL - Moved up */}
+          {/* Product URL - Optional */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              {t.productUrl} *
+              {t.productUrl}
             </label>
             <div className="flex gap-2">
               <input
@@ -225,16 +224,18 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
                 }`}
                 placeholder={t.productUrlPlaceholder}
               />
-              <button
-                type="button"
-                onClick={extractMetadata}
-                disabled={isLoadingMetadata || !formData.productUrl}
-                className="btn-primary px-6 flex items-center gap-2 whitespace-nowrap disabled:opacity-50"
-                title="Extraer información automáticamente"
-              >
-                <Sparkles className="w-4 h-4" />
-                {isLoadingMetadata ? 'Cargando...' : 'Auto-llenar'}
-              </button>
+              {formData.productUrl && (
+                <button
+                  type="button"
+                  onClick={extractMetadata}
+                  disabled={isLoadingMetadata || !formData.productUrl}
+                  className="btn-primary px-6 flex items-center gap-2 whitespace-nowrap disabled:opacity-50"
+                  title="Extraer información automáticamente"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {isLoadingMetadata ? 'Cargando...' : 'Auto-llenar'}
+                </button>
+              )}
             </div>
             {errors.productUrl && (
               <p className="text-red-500 text-sm mt-1">{errors.productUrl}</p>
@@ -253,9 +254,14 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
                 )}
               </div>
             )}
-            {!metadataError && (
+            {!metadataError && formData.productUrl && (
               <p className="text-xs text-gray-500 mt-1">
-                💡 Pega la URL del producto y haz click en "Auto-llenar" para extraer la información automáticamente
+                💡 Haz click en "Auto-llenar" para extraer la información automáticamente
+              </p>
+            )}
+            {!formData.productUrl && (
+              <p className="text-xs text-gray-500 mt-1">
+                💡 Opcional: Agrega un link al producto o simplemente describe lo que quieres en el título y descripción
               </p>
             )}
           </div>

@@ -208,8 +208,8 @@ export const translations: Record<'en' | 'es', Translations> = {
     imageUrl: 'Image URL',
     imageUrlPlaceholder: 'https://example.com/image.jpg',
     imageUrlOptional: 'Image URL (optional - auto-detected)',
-    productUrl: 'Product URL',
-    productUrlPlaceholder: 'https://example.com/product',
+    productUrl: 'Product URL (optional)',
+    productUrlPlaceholder: 'https://example.com/product (or leave empty)',
     addItemButton: 'Add Item',
     updateItemButton: 'Update Item',
 
@@ -336,8 +336,8 @@ export const translations: Record<'en' | 'es', Translations> = {
     imageUrl: 'URL de Imagen',
     imageUrlPlaceholder: 'https://ejemplo.com/imagen.jpg',
     imageUrlOptional: 'URL de Imagen (opcional - se detecta automáticamente)',
-    productUrl: 'URL del Producto',
-    productUrlPlaceholder: 'https://ejemplo.com/producto',
+    productUrl: 'URL del Producto (opcional)',
+    productUrlPlaceholder: 'https://ejemplo.com/producto (o déjalo vacío)',
     addItemButton: 'Agregar Artículo',
     updateItemButton: 'Actualizar Artículo',
 
