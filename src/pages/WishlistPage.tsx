@@ -182,11 +182,11 @@ export const WishlistPage: React.FC = () => {
    */
   const handleContribute = async (itemId: string, _data: ContributeDTO) => {
     if (!wishlist) return;
-    
+
     // Find the item to get its details
     const item = wishlist.items.find(i => i.id === itemId);
     if (!item || item.itemType !== 'pooled_gift') return;
-    
+
     setContributingToItem(item);
     setContributionModalOpen(true);
   };

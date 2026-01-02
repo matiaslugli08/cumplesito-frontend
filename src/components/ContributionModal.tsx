@@ -20,7 +20,6 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
   targetAmount,
   currentAmount,
 }) => {
-  const { t } = useLanguage();
   const [formData, setFormData] = useState<ContributeDTO>({
     contributorName: '',
     amount: 0,
@@ -39,11 +38,11 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
     }
 
     if (!formData.amount || formData.amount <= 0) {
-      newErrors.amount = 'El monto debe ser mayor a 0';
+      newErrors.amount = 'El monto debe ser mayor a 0' as any;
     }
 
     if (formData.amount > remainingAmount) {
-      newErrors.amount = `El monto no puede ser mayor al restante ($${remainingAmount.toFixed(2)})`;
+      newErrors.amount = `El monto no puede ser mayor al restante ($${remainingAmount.toFixed(2)})` as any;
     }
 
     setErrors(newErrors);
@@ -99,7 +98,7 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
           {/* Item Info */}
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 mb-6">
             <h3 className="font-semibold text-gray-800 mb-2">{itemTitle}</h3>
-            
+
             {/* Progress Bar */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-gray-600">
@@ -228,4 +227,3 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
     </div>
   );
 };
-

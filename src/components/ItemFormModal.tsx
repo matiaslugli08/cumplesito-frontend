@@ -138,7 +138,7 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
     // Validate pooled gift target amount
     if (formData.itemType === 'pooled_gift') {
       if (!formData.targetAmount || formData.targetAmount <= 0) {
-        newErrors.targetAmount = 'El monto objetivo es requerido y debe ser mayor a 0';
+        newErrors.targetAmount = 'El monto objetivo es requerido y debe ser mayor a 0' as any;
       }
     }
 
@@ -233,7 +233,7 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
               </label>
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              {formData.itemType === 'pooled_gift' 
+              {formData.itemType === 'pooled_gift'
                 ? '💡 Ideal para regalos caros: varias personas pueden contribuir con dinero'
                 : '💡 Un regalo que una sola persona puede comprar'
               }
