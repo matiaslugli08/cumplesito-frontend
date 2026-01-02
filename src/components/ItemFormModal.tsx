@@ -243,7 +243,7 @@ export const ItemFormModal: React.FC<ItemFormModalProps> = ({
             {metadataError && (
               <div className="text-yellow-700 text-sm mt-2 bg-yellow-50 p-3 rounded-lg border border-yellow-200">
                 <p className="font-semibold mb-1">⚠️ {metadataError}</p>
-                {formData.productUrl.toLowerCase().includes('mercadolibre') && (
+                {formData.productUrl?.toLowerCase().includes('mercadolibre') && (
                   <p className="text-xs mt-2 text-gray-600">
                     <strong>Cómo obtener la imagen:</strong><br/>
                     1. Abre el producto en MercadoLibre<br/>
