@@ -39,6 +39,8 @@ export const ItemCard: React.FC<ItemCardProps> = ({
   const [showNameInput, setShowNameInput] = useState<boolean>(false);
   const [showReserveInput, setShowReserveInput] = useState<boolean>(false);
   const [reserverName, setReserverName] = useState<string>('');
+  const [nameError, setNameError] = useState<string>('');
+  const [reserveError, setReserveError] = useState<string>('');
 
   const isPooledGift = item.itemType === 'pooled_gift';
   const percentComplete = isPooledGift && item.targetAmount
@@ -54,15 +56,18 @@ export const ItemCard: React.FC<ItemCardProps> = ({
       onTogglePurchase?.(item.id, buyerName || 'Anonymous');
       setBuyerName('');
       setShowNameInput(false);
+      setNameError('');
     } else {
       // Require name
       if (!buyerName.trim()) {
         setShowNameInput(true);
+        setNameError('El nombre es obligatorio');
         return;
       }
       onTogglePurchase?.(item.id, buyerName);
       setBuyerName('');
       setShowNameInput(false);
+      setNameError('');
     }
   };
 
@@ -73,15 +78,31 @@ export const ItemCard: React.FC<ItemCardProps> = ({
   const handleReserve = () => {
     if (!reserverName.trim() && !allowAnonymousPurchase) {
       setShowReserveInput(true);
+      setReserveError('El nombre es obligatorio');
       return;
     }
     onReserve?.(item.id, { reservedBy: reserverName || 'Anónimo' });
     setReserverName('');
     setShowReserveInput(false);
+    setReserveError('');
   };
 
   const handleUnreserve = () => {
     onUnreserve?.(item.id);
+  };
+
+  const handleBuyerNameChange = (value: string) => {
+    setBuyerName(value);
+    if (nameError && value.trim()) {
+      setNameError('');
+    }
+  };
+
+  const handleReserverNameChange = (value: string) => {
+    setReserverName(value);
+    if (reserveError && value.trim()) {
+      setReserveError('');
+    }
   };
 
   return (
@@ -245,18 +266,27 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                     // Item is available
                     <div className="space-y-1.5">
                       {(showNameInput || !allowAnonymousPurchase) && (
-                        <input
-                          type="text"
-                          placeholder={allowAnonymousPurchase ? `${t.yourNameInput} (opcional)` : t.yourNameInput}
-                          value={buyerName}
-                          onChange={(e) => setBuyerName(e.target.value)}
-                          className="w-full px-3 py-2 sm:px-2 sm:py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 text-sm sm:text-xs"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              handleMarkAsPurchased();
-                            }
-                          }}
-                        />
+                        <div>
+                          <input
+                            type="text"
+                            placeholder={allowAnonymousPurchase ? `${t.yourNameInput} (opcional)` : t.yourNameInput}
+                            value={buyerName}
+                            onChange={(e) => handleBuyerNameChange(e.target.value)}
+                            className={`w-full px-3 py-2 sm:px-2 sm:py-1.5 border rounded-md focus:ring-2 text-sm sm:text-xs ${
+                              nameError 
+                                ? 'border-red-500 focus:ring-red-500' 
+                                : 'border-gray-300 focus:ring-primary-500'
+                            }`}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                handleMarkAsPurchased();
+                              }
+                            }}
+                          />
+                          {nameError && (
+                            <p className="text-red-500 text-xs mt-1">{nameError}</p>
+                          )}
+                        </div>
                       )}
                       <button
                         onClick={() => {
@@ -285,13 +315,27 @@ export const ItemCard: React.FC<ItemCardProps> = ({
                         Reservar para después
                       </button>
                       {(showReserveInput || !allowAnonymousPurchase) && (
-                        <input
-                          type="text"
-                          placeholder="Tu nombre para reservar"
-                          value={reserverName}
-                          onChange={(e) => setReserverName(e.target.value)}
-                          className="w-full px-3 py-2 sm:px-2 sm:py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 text-sm sm:text-xs"
-                        />
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="Tu nombre para reservar"
+                            value={reserverName}
+                            onChange={(e) => handleReserverNameChange(e.target.value)}
+                            className={`w-full px-3 py-2 sm:px-2 sm:py-1.5 border rounded-md focus:ring-2 text-sm sm:text-xs ${
+                              reserveError 
+                                ? 'border-red-500 focus:ring-red-500' 
+                                : 'border-gray-300 focus:ring-yellow-500'
+                            }`}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                handleReserve();
+                              }
+                            }}
+                          />
+                          {reserveError && (
+                            <p className="text-red-500 text-xs mt-1">{reserveError}</p>
+                          )}
+                        </div>
                       )}
                     </div>
                   )
